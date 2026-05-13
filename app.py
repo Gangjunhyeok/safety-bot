@@ -4,6 +4,7 @@ import json
 import pandas as pd
 import io
 from datetime import datetime
+import random  # <--- 이 줄을 맨 위에 추가해 주세요! (랜덤 뽑기용 부품)
 
 # 1. 웹 앱 기본 설정 (브라우저 탭 이름, 아이콘, 레이아웃 등)
 st.set_page_config(page_title="유해위험요인 추출기", page_icon="🛡️", layout="centered")
@@ -12,15 +13,17 @@ st.set_page_config(page_title="유해위험요인 추출기", page_icon="🛡️
 st.title("🛡️ 스마트 위험성평가 AI 봇")
 st.markdown("현장 설비 및 작업명을 입력하면 **기술사 수준의 유해위험요인과 공학적 대책**을 즉시 추출합니다.")
 
-# 3. 사이드바 (API 키 자동 적용 및 입력란)
+# 3. 사이드바 (멀티 API 키 자동 분산 적용)
 with st.sidebar:
     st.header("⚙️ 환경 설정")
     
-    # 비밀 금고(Secrets)에 키가 있으면 그걸 자동으로 꺼내 씀!
-    if "GOOGLE_API_KEY" in st.secrets:
-        api_key = st.secrets["GOOGLE_API_KEY"]
-        st.success("✅ 서버에 등록된 API 키가 자동 적용되었습니다!")
-    # 금고에 없으면 예전처럼 직접 입력창을 띄움
+    # 금고에 여러 개의 키(GOOGLE_API_KEYS)가 등록되어 있다면?
+    if "GOOGLE_API_KEYS" in st.secrets:
+        # 키 목록을 싹 가져와서
+        api_keys = st.secrets["GOOGLE_API_KEYS"]
+        # 그중 하나를 랜덤으로 뽑아서 쓴다! (할당량 분산 효과)
+        api_key = random.choice(api_keys)
+        st.success(f"✅ {len(api_keys)}개의 API 키가 로드되어 교대로 사용 중입니다!")
     else:
         api_key = st.text_input("구글 API 키를 입력하세요", type="password")
         
