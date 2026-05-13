@@ -12,11 +12,18 @@ st.set_page_config(page_title="유해위험요인 추출기", page_icon="🛡️
 st.title("🛡️ 스마트 위험성평가 AI 봇")
 st.markdown("현장 설비 및 작업명을 입력하면 **기술사 수준의 유해위험요인과 공학적 대책**을 즉시 추출합니다.")
 
-# 3. 사이드바 (API 키 입력란 - 보안 강화)
+# 3. 사이드바 (API 키 자동 적용 및 입력란)
 with st.sidebar:
     st.header("⚙️ 환경 설정")
-    # type="password"를 주면 화면에 키가 별표(***)로 가려져서 안전해!
-    api_key = st.text_input("구글 API 키를 입력하세요", type="password")
+    
+    # 비밀 금고(Secrets)에 키가 있으면 그걸 자동으로 꺼내 씀!
+    if "GOOGLE_API_KEY" in st.secrets:
+        api_key = st.secrets["GOOGLE_API_KEY"]
+        st.success("✅ 서버에 등록된 API 키가 자동 적용되었습니다!")
+    # 금고에 없으면 예전처럼 직접 입력창을 띄움
+    else:
+        api_key = st.text_input("구글 API 키를 입력하세요", type="password")
+        
     st.markdown("---")
     st.info("💡 **사용 팁**\n\n'압력용기', '지게차', '밀폐공간 용접' 등 단어만 간단히 입력하세요.")
 
